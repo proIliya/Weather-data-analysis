@@ -1,5 +1,7 @@
-
+import subprocess
+import sys
 import streamlit as st
+import json
 import pandas as pd
 import plotly.express as px
 from pathlib import Path
@@ -69,8 +71,9 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
+
 # ==========================================
-# 3. LOAD DATA
+# 3. AUTOMATIC DATA UPDATE & LOAD DATA
 # ==========================================
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -82,9 +85,29 @@ DATA_FILE = (
     / "tehran_weather_cleaned.csv"
 )
 
-if not DATA_FILE.exists():
-    st.error(f"Dataset not found: {DATA_FILE}")
-    st.stop()
+
+@st.cache_data(show_spinner=False)
+def update_weather_data():
+
+    scripts = [
+        BASE_DIR / "src" / "data_collection.py",
+        BASE_DIR / "src" / "data_cleaning.py",
+        BASE_DIR / "src" / "insights.py"
+    ]
+
+    for script in scripts:
+
+        result = subprocess.run(
+            [sys.executable, str(script)],
+            cwd=BASE_DIR,
+            capture_output=True,
+            text=True,
+            check=True
+        )
+
+    return pd.Timestamp.now().strftime(
+        "%Y-%m-%d %H:%M:%S"
+    )
 
 
 @st.cache_data
@@ -119,7 +142,86 @@ def load_data():
     return data
 
 
-df = load_data()
+# Manual refresh button
+if st.sidebar.button("🔄 Refresh Weather Data"):
+
+    update_weather_data.clear()
+    load_data.clear()
+
+
+# Run pipeline once and cache its result
+try:
+
+    with st.spinner("Updating weather data..."):
+
+        last_updated = update_weather_data()
+
+    df = load_data()
+
+    # ==========================================
+    # UPDATE STATUS DISPLAY
+    # ==========================================
+
+    STATUS_FILE = BASE_DIR / "reports" / "update_status.json"
+
+    if STATUS_FILE.exists():
+
+        with open(STATUS_FILE, "r", encoding="utf-8") as file:
+            status = json.load(file)
+
+        st.sidebar.markdown("---")
+        st.sidebar.subheader("📡 Data Update Status")
+
+        st.sidebar.metric(
+            "Total Records",
+            status.get("total_records", len(df))
+        )
+
+        st.sidebar.metric(
+            "New Records",
+            status.get("new_records", 0)
+        )
+
+        st.sidebar.metric(
+            "Latest Data Date",
+            status.get("latest_data_date") or "N/A"
+        )
+
+        last_update = status.get("last_successful_update")
+
+        if last_update:
+            update_time = pd.to_datetime(last_update)
+            st.sidebar.caption(
+                f"Last Successful Update: "
+                f"{update_time.strftime('%Y-%m-%d %H:%M:%S %Z')}"
+            )
+
+    else:
+
+        st.sidebar.info("Update status is not available yet.")
+
+    st.sidebar.success("Weather data is up to date!")
+
+    st.sidebar.caption(
+        f"Last updated: {last_updated}"
+    )
+
+except subprocess.CalledProcessError as error:
+
+    st.error("Weather data update failed.")
+
+    st.code(error.stderr or str(error))
+
+    st.stop()
+
+except Exception as error:
+
+    st.error("An unexpected error occurred.")
+
+    st.exception(error)
+
+    st.stop()
+
 
 # ==========================================
 # 4. CHART THEME
@@ -785,6 +887,62 @@ st.dataframe(
     hide_index=True
 )
 
+# ==========================================
+# UPDATE HISTORY
+# ==========================================
+
+HISTORY_FILE = BASE_DIR / "reports" / "update_history.csv"
+
+st.markdown("---")
+st.header("Update History")
+
+if HISTORY_FILE.exists():
+
+    history_df = pd.read_csv(HISTORY_FILE)
+
+    if not history_df.empty:
+
+        history_df["update_time"] = pd.to_datetime(
+            history_df["update_time"],
+            errors="coerce"
+        )
+
+        history_df = history_df.dropna(
+            subset=["update_time"]
+        ).sort_values(
+            "update_time",
+            ascending=False
+        )
+
+        st.subheader("Recent Updates")
+
+        st.dataframe(
+            history_df,
+            width="stretch",
+            hide_index=True
+        )
+
+        st.subheader("Update Activity")
+
+        chart_df = history_df.sort_values(
+            "update_time"
+        ).tail(30)
+
+        st.bar_chart(
+            chart_df.set_index("update_time")[
+                "new_records"
+            ],
+            width="stretch"
+        )
+
+    else:
+
+        st.info("No update history available yet.")
+
+else:
+
+    st.info("Update history file has not been created yet.")
+
 
 # ==========================================
 # 17. DOWNLOAD DATA
@@ -835,3 +993,5 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
+

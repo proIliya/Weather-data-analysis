@@ -1,5 +1,4 @@
 time,temperature_2m_max,temperature_2m_min,temperature_2m_mean,relative_humidity_2m_mean,precipitation_sum,wind_speed_10m_max,sunshine_duration,city
-2025-11-17,17.7,11.8,14.7,48.0,0.1,12.1,35008.06,Tehran
 2025-11-18,18.8,6.4,12.5,43.0,0.0,8.2,34953.81,Tehran
 2025-11-19,19.2,8.5,12.9,37.0,0.0,7.3,34912.27,Tehran
 2025-11-20,19.2,8.4,13.0,34.0,0.0,7.1,34828.88,Tehran
@@ -364,3 +363,4 @@ time,temperature_2m_max,temperature_2m_min,temperature_2m_mean,relative_humidity
 2026-11-14,17.4,6.4,11.4,55.0,0.0,5.8,35204.99,Tehran
 2026-11-15,17.8,8.3,12.5,52.0,0.0,6.8,33531.08,Tehran
 2026-11-16,16.6,9.3,12.6,61.0,0.0,7.0,30015.84,Tehran
+2026-11-17,15.9,7.7,12.0,57.0,0.0,6.8,34543.74,Tehran

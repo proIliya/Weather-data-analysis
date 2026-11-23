@@ -8,9 +8,9 @@ data collected for Tehran.
 
 ## Temperature Analysis
 
-- Average Temperature: 18.59 °C
+- Average Temperature: 18.58 °C
 - Average Maximum Temperature: 23.15 °C
-- Average Minimum Temperature: 13.72 °C
+- Average Minimum Temperature: 13.71 °C
 - Hottest Day: 2026-07-11
 - Hottest Daily Mean: 35.90 °C
 - Coldest Day: 2026-01-22
@@ -18,25 +18,25 @@ data collected for Tehran.
 
 ## Rainfall Analysis
 
-- Total Rainfall: 325.60 mm
-- Rainy Days: 121
+- Total Rainfall: 325.50 mm
+- Rainy Days: 120
 - Average Daily Rainfall: 0.89 mm
 - Maximum Daily Rainfall: 27.20 mm
 
 ## Humidity Analysis
 
-- Average Humidity: 41.06 %
+- Average Humidity: 41.08 %
 - Maximum Humidity: 89.00 %
 - Minimum Humidity: 10.00 %
 
 ## Wind Analysis
 
-- Average Maximum Wind Speed: 10.84 km/h
+- Average Maximum Wind Speed: 10.82 km/h
 
 ## Sunshine Analysis
 
 - Average Daily Sunshine: 10.94 hours
-- Total Sunshine: 3994.18 hours
+- Total Sunshine: 3994.05 hours
 
 ## Monthly Analysis
 
@@ -51,7 +51,7 @@ data collected for Tehran.
 | Winter | 6.48 | 132.00 | 56.61 |
 | Spring | 15.79 | 124.70 | 45.76 |
 | Summer | 31.10 | 7.90 | 23.89 |
-| Autumn | 20.74 | 61.00 | 38.27 |
+| Autumn | 20.71 | 60.90 | 38.37 |
 
 ## Technologies Used
 
